@@ -1,9 +1,12 @@
 from PIL import Image
 from outline.outline import add_gradient_outline
+from overlay.overlay import overlay_images
 
-image_path = "tests/nikita.png"
-foreground_img = Image.open(image_path)
+back = Image.open("tests/Dust_II.jpg")
+foreground = Image.open("tests/nikita.png")
 
-image_with_gradient_outline = add_gradient_outline(foreground_img)
+foreground_outlined = add_gradient_outline(foreground)
+result_image = overlay_images(back, foreground_outlined, relative_position=(0.2, 0.5))
 
-image_with_gradient_outline.save("tests/out/res.png", format="PNG")
+if result_image:
+    result_image.save("tests/out/res2.png", format="PNG")
