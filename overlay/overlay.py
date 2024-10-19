@@ -1,23 +1,20 @@
 from PIL import Image
 
 
-def overlay_images(background_path: str,
-                   foreground_path: str,
-                   output_path: str,
-                   relative_position: tuple = (0.5, 0.5)
-                   ):
+def overlay_images(background: Image.Image, foreground: Image.Image,
+                   relative_position: tuple = (0.5, 0.5)) -> Image.Image:
     """
     Накладывает foreground изображение на background изображение с поддержкой альфа-канала
     и позицией по относительным координатам.
 
-    :param background_path: Путь к фону.
-    :param foreground_path: Путь к переднему плану.
-    :param output_path: Путь для сохранения результата.
+    :param background: Объект background изображения (Pillow Image).
+    :param foreground: Объект foreground изображения (Pillow Image).
     :param relative_position: Относительная позиция (например (0.5, 0.5) для центра).
+    :return: Изображение после наложения (Pillow Image).
     """
     try:
-        background = Image.open(background_path).convert("RGBA")
-        foreground = Image.open(foreground_path).convert("RGBA")
+        background = background.convert("RGBA")
+        foreground = foreground.convert("RGBA")
 
         bg_width, bg_height = background.size
         fg_width, fg_height = foreground.size
@@ -27,7 +24,7 @@ def overlay_images(background_path: str,
 
         background.paste(foreground, (x, y), foreground)
 
-        background.save(output_path, format="PNG")
-        print(f"Изображение сохранено в {output_path}")
+        return background
     except Exception as e:
         print(f"Ошибка: {e}")
+        return None
