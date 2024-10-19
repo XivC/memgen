@@ -1,12 +1,11 @@
 from PIL import Image
-from outline.outline import add_gradient_outline
-from overlay.overlay import overlay_images
 
-back = Image.open("tests/Dust_II.jpg")
-foreground = Image.open("tests/nikita.png")
+from add_text import add_text
+from image_transform import apply_seam_carving
 
-foreground_outlined = add_gradient_outline(foreground)
-result_image = overlay_images(back, foreground_outlined, relative_position=(0.2, 0.5))
+test = Image.open("tests/img.png")
 
-if result_image:
-    result_image.save("tests/out/res2.png", format="PNG")
+test = apply_seam_carving(test, 0.9, 0.5)
+test = add_text(test, "Умоляю тебя выеби меня сковородкой", 30)
+
+test.show()
