@@ -39,5 +39,5 @@ def apply_seam_carving(img: Image, width_scale: float, height_scale: float) -> I
         data, (target_w, target_h),
     )
     transformed_img = Image.fromarray(transformed)
-    return _to_rgba(transformed_img)
+    return _to_rgba(transformed_img).resize(img.size)
 
