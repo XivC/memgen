@@ -15,3 +15,4 @@ def remove_background_metadata(image: Image.Image) -> Image.Image:
     cleaned_image.paste(image, (0, 0), mask=image)
 
     return cleaned_image
+
