@@ -5,7 +5,7 @@ import seam_carving
 from PIL import Image
 
 
-def shape_channels(img: Image, seed: int) -> Image:
+def shuffle_channels(img: Image, seed: int) -> Image:
     random.seed(seed)
     new_img = Image.new("RGBA", img.size)
 
