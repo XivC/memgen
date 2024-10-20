@@ -89,4 +89,5 @@ fabric.properties
 !.idea/codeStyles
 !.idea/runConfigurations
 tests/**
+exp.py
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all
