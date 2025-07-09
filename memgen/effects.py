@@ -1,5 +1,15 @@
 import numpy as np
-from PIL import Image, ImageFilter, ImageOps
+import seam_carving
+from PIL import Image, ImageOps, ImageFilter
+
+from .rgb import find_unused_color, to_rgb, to_rgba
+from .utils import change_ratio, crop_image
+
+__all__ = [
+    "add_gradient_outline",
+    "apply_seam_carving",
+    "add_noise",
+]
 
 
 def add_gradient_outline(image: Image.Image, outline_width: int = 20, color: tuple = (255, 255, 0)) -> Image.Image:
@@ -34,3 +44,35 @@ def add_gradient_outline(image: Image.Image, outline_width: int = 20, color: tup
     gradient_outline.paste(image, (outline_width, outline_width), mask=alpha)
 
     return gradient_outline
+
+
+def apply_seam_carving(img: Image, width_scale: float, height_scale: float) -> Image:
+
+    mask = find_unused_color(img)
+
+    rgb_img = to_rgb(img, mask)
+
+    data = np.array(rgb_img)
+    src_h, src_w, _ = data.shape
+    target_h, target_w = int(src_h * height_scale), int(src_w * width_scale)
+
+    transformed = seam_carving.resize(
+        data, (target_w, target_h),
+    )
+    transformed_img = Image.fromarray(transformed, "RGB")
+    transformed_img = to_rgba(transformed_img, mask)
+
+    x_scale = transformed_img.size[0] / img.size[0]
+    y_scale = transformed_img.size[1] / img.size[1]
+
+    return change_ratio(transformed_img, 1/x_scale, 1/y_scale)
+
+
+def add_noise(img: Image, x_scale: float, y_scale: float):
+    width, height = img.size
+    return img.resize(
+        (int(width * x_scale), int(height * y_scale))
+    ).resize((width, height))
+
+
+
