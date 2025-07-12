@@ -5,6 +5,8 @@ __all__ = [
     "overlay_images",
     "get_text",
     "change_ratio",
+    "rotate_image",
+    "crop_image"
 ]
 
 from PIL.Image import Transpose
