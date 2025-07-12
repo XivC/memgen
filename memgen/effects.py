@@ -12,16 +12,9 @@ __all__ = [
 ]
 
 
-def add_gradient_outline(image: Image.Image, outline_width: int = 20, color: tuple = (255, 255, 0)) -> Image.Image:
-    """
-    Добавляет градиентную обводку к объекту на изображении (foreground),
-    где цвет переходит от указанного (по умолчанию жёлтого) к прозрачному.
+def add_gradient_outline(image: Image.Image, outline_width: int = 20, color_r: int = 255, color_g: int = 255, color_b: int = 0) -> Image.Image:
 
-    :param image: Объект изображения (Pillow Image), которому нужно добавить градиентную обводку.
-    :param outline_width: Ширина обводки.
-    :param color: Цвет для обводки (по умолчанию жёлтый).
-    :return: Изображение с градиентной обводкой (Pillow Image).
-    """
+    color = (color_r, color_g, color_b)
     image = image.convert("RGBA")
     alpha = image.split()[3]
 
