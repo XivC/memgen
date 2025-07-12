@@ -40,20 +40,11 @@ def find_unused_color(image: Image, default: tuple[int, int, int] = (255, 255, 2
     return default
 
 
-def to_rgb(image: Image, fill: tuple[int, int, int]) -> Image:
-    """
-    Converts RGBA image to RGB, filling transparent pixels with specified color.
-
-    Args:
-        image: PIL Image in RGBA mode
-        fill: Tuple of (R, G, B) for filling transparent areas
-
-    Returns:
-        PIL Image in RGB mode
-    """
+def to_rgb(image: Image, fill_r: int, fill_g: int, fill_b: int) -> Image:
     if image.mode != 'RGBA':
         return image.convert('RGB')
 
+    fill = (fill_r, fill_g, fill_b)
     data = np.array(image)
     rgb_data = data[:, :, :3].copy()
     alpha = data[:, :, 3]
@@ -66,21 +57,14 @@ def to_rgb(image: Image, fill: tuple[int, int, int]) -> Image:
     return Image.fromarray(rgb_data, 'RGB')
 
 
-def to_rgba(image: Image, remove_color: tuple[int, int, int] | None = None) -> Image:
-    """
-    Converts RGB image to RGBA, optionally making a specific color transparent.
-
-    Args:
-        image: PIL Image in RGB mode
-        remove_color: Tuple of (R, G, B) to make transparent. If None, returns opaque RGBA.
-
-    Returns:
-        PIL Image in RGBA mode
-    """
+def to_rgba(image: Image, remove_color_r: int | None = None, remove_color_g: int | None = None, remove_color_b: int | None = None) -> Image:
     img = image.convert('RGBA')
 
-    if remove_color is None:
-        return img
+    remove_color = (remove_color_r, remove_color_g, remove_color_b)
+
+    for i in remove_color:
+        if i is None:
+            return img
 
     data = np.array(img)
     r, g, b = remove_color

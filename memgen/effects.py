@@ -12,16 +12,9 @@ __all__ = [
 ]
 
 
-def add_gradient_outline(image: Image.Image, outline_width: int = 20, color: tuple = (255, 255, 0)) -> Image.Image:
-    """
-    Добавляет градиентную обводку к объекту на изображении (foreground),
-    где цвет переходит от указанного (по умолчанию жёлтого) к прозрачному.
+def add_gradient_outline(image: Image.Image, outline_width: int = 20, color_r: int = 255, color_g: int = 255, color_b: int = 0) -> Image.Image:
 
-    :param image: Объект изображения (Pillow Image), которому нужно добавить градиентную обводку.
-    :param outline_width: Ширина обводки.
-    :param color: Цвет для обводки (по умолчанию жёлтый).
-    :return: Изображение с градиентной обводкой (Pillow Image).
-    """
+    color = (color_r, color_g, color_b)
     image = image.convert("RGBA")
     alpha = image.split()[3]
 
@@ -75,4 +68,24 @@ def add_noise(img: Image, x_scale: float, y_scale: float):
     ).resize((width, height))
 
 
+def add_images(img_1: Image, img_2: Image) -> Image:
+    img_1 = img_1.resize(img_2.size) if img_1.size != img_2.size else img_1
+    img_2 = img_2.resize(img_1.size) if img_2.size != img_1.size else img_2
+
+    width, height = img_1.size
+    result = Image.new("RGB", (width, height))
+
+    pix1 = img_1.load()
+    pix2 = img_2.load()
+    res_pix = result.load()
+
+    # Обработка каждого пикселя
+    for x in range(width):
+        for y in range(height):
+            r1, g1, b1 = pix1[x, y]
+            r2, g2, b2 = pix2[x, y]
+
+            res_pix[x, y] = min(r1, r2), min(g1, g2), min(b1, b2)
+
+    return result
 

@@ -1,10 +1,22 @@
 # Функции
 
-| Функция                | Код | Описание                       |
-|------------------------|-----|--------------------------------|
-| `add_gradient_outline` | `*` | Свечение вокруг изображения    |
-| `overlay_images`       | `+` | Объединяет 2 картинки в одну   |
-| `add_noise`            | `#` | Зашумливает изображение        |
-| `change_ratio`         | `!` | Меняет пропорции               |
-| `apply_seam_carving`   | `s` | Добавляет эффект SeamCarving   |                              
-| `add_text`             | `t` | Добавляет текст на изображение |
+| OpCode    | Args                                                                                                                   | Need stack depth | Push count | Description                                                                |
+|-----------|------------------------------------------------------------------------------------------------------------------------|------------------|------------|----------------------------------------------------------------------------|
+| `TEXT`    | `text`: str<br/> `font_size`: int = 15<br/>`fill`: str = "white"<br/>`stroke_width`: int = None                        | 0                | 1          | Generate image with given text                                             |
+| `SC`      | `width_scale`: float<br/>`height_scale`: float                                                                         | 1                | 1          | Apply seam carving to resize image                                         |
+| `OV`      | `relative_x`: float = 0.5<br/>`relative_y`: float = 0.5                                                                | 2                | 1          | Overlay foreground image on background                                     |
+| `OUTLINE` | `outline_width`: int = 20<br/>`color_r`: int = 255<br/>`color_g`: int = 255<br/>`color_b`: int = 0                     | 1                | 1          | Add gradient outline to image                                              |
+| `NOISE`   | `x_scale`: float<br/>`y_scale`: float                                                                                  | 1                | 1          | Add noise effect by scaling and resizing                                   |
+| `RATIO`   | `x_scale`: float<br/>`y_scale`: float                                                                                  | 1                | 1          | Change image ratio with optional flipping                                  |
+| `REBM`    |                                                                                                                        | 1                | 1          | Remove background metadata (alpha channel)                                 |
+| `RGB`     | `fill_r`: int<br/>`fill_g`: int<br/>`fill_b`: int                                                                      | 1                | 1          | Convert RGBA to RGB with fill color                                        |
+| `RGBA`    | `remove_color_r`: int \| None = None<br/>`remove_color_g`: int \| None = None<br/>`remove_color_b`: int \| None = None | 1                | 1          | Convert RGB to RGBA, optionally make color transparent                     |
+| `CHR`     | `x_scale`: float<br/>`y_scale`: float                                                                                  | 1                | 1          | Change image ratio with optional flipping                                  |
+| `CROP`    |                                                                                                                        | 1                | 1          | Crop image to remove transparent borders                                   |
+| `ROTATE`  | `angle`: float                                                                                                         | 1                | 1          | Rotate image by specified angle                                            |
+| `DECL`    | `func_name`: str<br/>`img_count`: int = 0                                                                              | `img_count`      | 0          | Declare function with given name. Img count points to required stack depth |
+| `RET`     |                                                                                                                        | 0                | 0          | Return from function call                                                  |
+| `PUSH`    | `var_name`: str                                                                                                        | 0                | 1          | Push variable value to stack                                               |
+| `POP`     |                                                                                                                        | 0                | 1          | Pop and return top image from stack                                        |
+| `SV`      | `var_name`: str                                                                                                        | 1                | 0          | Save top image to variable                                                 |
+| `CALL`    | `func_name`: str                                                                                                       | 0                | 0          | Call function by name                                                      |
