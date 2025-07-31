@@ -1,0 +1,26 @@
+[project]
+name = "libimgen"
+version = "0.2.2"
+description = "An image processing tool"
+requires-python = ">=3.11"
+dependencies = [
+    "llvmlite==0.43.0",
+    "numba==0.60.0",
+    "numpy==2.0.0",
+    "pillow==11.0.0",
+    "scipy==1.14.1",
+    "seam-carving==1.1.0"
+]
+
+[project.optional-dependencies]
+automation = []
+
+[build-system]
+requires = ["setuptools", "uv"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["libimgen", "libimgen.*"]

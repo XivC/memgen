@@ -20,5 +20,5 @@ class OpCode(str, Enum):
     POP = "POP"
     SV = "SV"
     CALL = "CALL"
-
+    MXMERGE = "MXMERGE"
 

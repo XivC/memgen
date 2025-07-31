@@ -1,3 +1,6 @@
+import os
+import platform
+
 import numpy as np
 from PIL import Image, ImageFont, ImageDraw
 
@@ -9,7 +12,32 @@ __all__ = [
     "crop_image"
 ]
 
-from PIL.Image import Transpose
+
+FONT_CANDIDATES = {
+    "Windows": [
+        r"C:\Windows\Fonts\impact.ttf",
+        r"C:\Windows\Fonts\arialbd.ttf"
+    ],
+    "Darwin": [
+        "/System/Library/Fonts/Supplemental/Impact.ttf",
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+    ],
+    "Linux": [
+        "/usr/share/fonts/truetype/msttcorefonts/Impact.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"
+    ]
+}
+
+def get_font_path():
+    system = platform.system()
+    candidates = FONT_CANDIDATES.get(system, [])
+
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+
+    return None
 
 
 def overlay_images(
@@ -40,7 +68,12 @@ def get_text(
         stroke_width: int = None,
 ):
 
-    font = ImageFont.truetype("impact.ttf", font_size)
+    font_path = get_font_path()
+    if not font_path:
+        font = ImageFont.load_default(font_size)
+    else:
+        font = ImageFont.truetype(font_path, font_size)
+
     _, _, text_width, text_height = font.getbbox(text=text)
 
     if not stroke_width:
@@ -62,57 +95,42 @@ def change_ratio(img: Image, x_scale: float, y_scale: float) -> Image:
     resized = img.resize((new_width, new_height))
 
     if x_scale < 0 and y_scale < 0:
-        return resized.transpose(Transpose.ROTATE_180)
+        return resized.transpose(Image.Transpose.ROTATE_180)
     elif x_scale < 0:
-        return resized.transpose(Transpose.FLIP_LEFT_RIGHT)
+        return resized.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
     elif y_scale < 0:
-        return resized.transpose(Transpose.FLIP_TOP_BOTTOM)
+        return resized.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
 
     return resized
 
 
 def crop_image(image: Image) -> Image:
-    """
-    Crop the image to remove borders with fully transparent pixels.
-
-    Args:
-        image: PIL Image in RGBA mode
-
-    Returns:
-        Cropped PIL Image with transparent borders removed
-    """
     if image.mode != 'RGBA':
         return image
 
-    # Convert to numpy array
     data = np.array(image)
     alpha = data[:, :, 3]
-
-    # Find rows and columns that contain non-transparent pixels
     rows_with_content = np.where(alpha.any(axis=1))[0]
     cols_with_content = np.where(alpha.any(axis=0))[0]
 
     if len(rows_with_content) == 0 or len(cols_with_content) == 0:
-        return Image.new('RGBA', (0, 0))  # Return empty image if fully transparent
+        return Image.new('RGBA', (0, 0))
 
-    # Determine crop boundaries
     top = rows_with_content[0]
     bottom = rows_with_content[-1]
     left = cols_with_content[0]
     right = cols_with_content[-1]
 
-    # Crop the image
     return image.crop((left, top, right + 1, bottom + 1))
 
 
 def rotate_image(img: Image, angle: float) -> Image:
 
-    # Rotate while expanding the canvas to fit the rotated image
     rotated = img.rotate(
         angle,
-        expand=True,  # Ensures the whole image fits without cropping
-        resample=Image.BICUBIC,  # High-quality resampling
-        fillcolor=None if img.mode == 'RGBA' else (255, 255, 255)  # Transparent for RGBA
+        expand=True,
+        resample=Image.BICUBIC,
+        fillcolor=None if img.mode == 'RGBA' else (255, 255, 255)
     )
 
     return rotated

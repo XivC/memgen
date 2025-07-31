@@ -2,9 +2,9 @@ from typing import Callable
 
 from PIL import Image
 
-from automation.constants import OpCode
-from automation.models import Instruction
-import memgen
+from src.libimgen.automation.constants import OpCode
+from src.libimgen.automation.models import Instruction
+from src.libimgen import core
 
 
 class Machine:
@@ -106,18 +106,19 @@ class Machine:
 
     def get_default_known_functions(self) -> dict[str, tuple[Callable, int]]:
         return {
-            OpCode.TEXT: (memgen.get_text, 0),
-            OpCode.SEAM_CARVING: (memgen.apply_seam_carving, 1),
-            OpCode.OVERLAY: (memgen.overlay_images, 2),
-            OpCode.OUTLINE: (memgen.add_gradient_outline, 1),
-            OpCode.NOISE: (memgen.add_noise, 1),
-            OpCode.RATIO: (memgen.change_ratio, 1),
-            OpCode.REMOVE_BACKGROUND_METADATA: (memgen.remove_background_metadata, 1),
-            OpCode.TO_RGB: (memgen.to_rgb, 1),
-            OpCode.TO_RGBA: (memgen.to_rgba, 1),
-            OpCode.CHANGE_RATIO: (memgen.change_ratio, 1),
-            OpCode.CROP_IMAGE: (memgen.crop_image, 1),
-            OpCode.ROTATE_IMAGE: (memgen.rotate_image, 1),
+            OpCode.TEXT: (core.get_text, 0),
+            OpCode.SEAM_CARVING: (core.apply_seam_carving, 1),
+            OpCode.OVERLAY: (core.overlay_images, 2),
+            OpCode.OUTLINE: (core.add_gradient_outline, 1),
+            OpCode.NOISE: (core.add_noise, 1),
+            OpCode.RATIO: (core.change_ratio, 1),
+            OpCode.REMOVE_BACKGROUND_METADATA: (core.remove_background_metadata, 1),
+            OpCode.TO_RGB: (core.to_rgb, 1),
+            OpCode.TO_RGBA: (core.to_rgba, 1),
+            OpCode.CHANGE_RATIO: (core.change_ratio, 1),
+            OpCode.CROP_IMAGE: (core.crop_image, 1),
+            OpCode.ROTATE_IMAGE: (core.rotate_image, 1),
+            OpCode.MXMERGE: (core.max_merge_images, 2),
             OpCode.PUSH: (self.push, 0),
             OpCode.POP: (self.safe_pop, 0),
             OpCode.RET: (self.ret, 0),
