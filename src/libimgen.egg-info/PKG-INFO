@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: libimgen
+Version: 0.2.2
+Summary: An image processing tool
+Requires-Python: >=3.11
+Requires-Dist: llvmlite==0.43.0
+Requires-Dist: numba==0.60.0
+Requires-Dist: numpy==2.0.0
+Requires-Dist: pillow==11.0.0
+Requires-Dist: scipy==1.14.1
+Requires-Dist: seam-carving==1.1.0
+Provides-Extra: automation

@@ -3,12 +3,13 @@ import seam_carving
 from PIL import Image, ImageOps, ImageFilter
 
 from .rgb import find_unused_color, to_rgb, to_rgba
-from .utils import change_ratio, crop_image
+from .utils import change_ratio
 
 __all__ = [
     "add_gradient_outline",
     "apply_seam_carving",
     "add_noise",
+    "max_merge_images",
 ]
 
 
@@ -43,7 +44,7 @@ def apply_seam_carving(img: Image, width_scale: float, height_scale: float) -> I
 
     mask = find_unused_color(img)
 
-    rgb_img = to_rgb(img, mask)
+    rgb_img = to_rgb(img, *mask)
 
     data = np.array(rgb_img)
     src_h, src_w, _ = data.shape
@@ -53,7 +54,7 @@ def apply_seam_carving(img: Image, width_scale: float, height_scale: float) -> I
         data, (target_w, target_h),
     )
     transformed_img = Image.fromarray(transformed, "RGB")
-    transformed_img = to_rgba(transformed_img, mask)
+    transformed_img = to_rgba(transformed_img, *mask)
 
     x_scale = transformed_img.size[0] / img.size[0]
     y_scale = transformed_img.size[1] / img.size[1]
@@ -68,7 +69,7 @@ def add_noise(img: Image, x_scale: float, y_scale: float):
     ).resize((width, height))
 
 
-def add_images(img_1: Image, img_2: Image) -> Image:
+def max_merge_images(img_1: Image, img_2: Image) -> Image:
     img_1 = img_1.resize(img_2.size) if img_1.size != img_2.size else img_1
     img_2 = img_2.resize(img_1.size) if img_2.size != img_1.size else img_2
 
@@ -79,13 +80,12 @@ def add_images(img_1: Image, img_2: Image) -> Image:
     pix2 = img_2.load()
     res_pix = result.load()
 
-    # Обработка каждого пикселя
     for x in range(width):
         for y in range(height):
             r1, g1, b1 = pix1[x, y]
             r2, g2, b2 = pix2[x, y]
 
-            res_pix[x, y] = min(r1, r2), min(g1, g2), min(b1, b2)
+            res_pix[x, y] = max(r1, r2), max(g1, g2), max(b1, b2)
 
     return result
 
